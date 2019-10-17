@@ -1,7 +1,7 @@
-import Ember from 'ember';
+import { helper as buildHelper } from '@ember/component/helper';
 
 export function list(params/*, hash*/) {
   return params;
 }
 
-export default Ember.Helper.helper(list);
+export default buildHelper(list);
