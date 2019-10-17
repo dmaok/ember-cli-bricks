@@ -20,7 +20,7 @@ export default class BrickGrid extends Component {
   @computed()
   get gridContainer() {
     return this.element.querySelector('.bricks-container');
-  };
+  }
 
   @computed()
   get brickInstance() {
