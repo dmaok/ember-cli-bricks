@@ -2,12 +2,12 @@ import Component from '@ember/component';
 import {computed} from '@ember/object';
 import {assign} from '@ember/polyfills';
 import Bricks from 'bricks';
-import layout from '../templates/components/bricks-grid';
+import template from '../templates/components/bricks-grid';
+import { layout } from '@ember-decorators/component';
 import {observes} from '@ember-decorators/object';
 
-export default class BrickGrid extends Component {
-  layout = layout;
-
+export default @layout(template)
+class BrickGrid extends Component {
   packed = 'packed';
   resize = true;
   position = true;
