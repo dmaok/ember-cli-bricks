@@ -1,19 +1,17 @@
-
-import Ember from 'ember';
 import Item from './item';
 
-const { on } = Ember;
+export default class Image extends Item {
+  didInsertElement() {
+    super.didInsertElement(...arguments);
 
-export default Item.extend({
-  sendRepackOnInit: on('didInsertElement', function() {
-    const img = this.$('img');
+    const img = this.element.querySelector('img');
+    if (!img) return;
 
-    img.on('load', () => {
+    img.onload = () => {
       if (!this.get('isDestroyed')) {
-        this.sendAction('repack');
+        this.repack();
       }
-    });
-
-    this.sendAction('repack');
-  }),
-});
+    };
+    this.repack();
+  }
+}

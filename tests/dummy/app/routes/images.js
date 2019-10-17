@@ -1,6 +1,5 @@
-import Ember from 'ember';
-
-const { Route, A } = Ember;
+import Route from '@ember/routing/route';
+import { A } from '@ember/array';
 
 function randomInteger(min, max) {
   var rand = min - 0.5 + Math.random() * (max - min + 1)

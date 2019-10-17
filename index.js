@@ -1,12 +1,11 @@
-/* eslint-env node */
 'use strict';
 
-var path = require('path');
-var Funnel = require('broccoli-funnel');
-var MergeTrees = require('broccoli-merge-trees');
+let path = require('path');
+let Funnel = require('broccoli-funnel');
+let MergeTrees = require('broccoli-merge-trees');
 
 module.exports = {
-  name: 'ember-cli-bricks',
+  name: require('./package').name,
 
   included(app) {
     this._super.included.apply(this, arguments);
@@ -18,7 +17,7 @@ module.exports = {
   },
 
   treeForVendor(vendorTree) {
-    var momentTree = new Funnel(path.join(this.project.root, 'node_modules', 'bricks.js', 'dist'), {
+    let momentTree = new Funnel(path.join(this.project.root, 'node_modules', 'bricks.js', 'dist'), {
       files: ['bricks.js']
     });
 
