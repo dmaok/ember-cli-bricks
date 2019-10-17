@@ -1,40 +1,40 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import {computed} from '@ember/object';
+import {assign} from '@ember/polyfills';
 import Bricks from 'bricks';
 import layout from '../templates/components/bricks-grid';
+import {observes} from '@ember-decorators/object';
 
-const { Component, computed, observer, assign} = Ember;
+export default class BrickGrid extends Component {
+  layout = layout;
 
-export default Component.extend({
-  layout,
+  packed = 'packed';
+  resize = true;
+  position = true;
+  isPacked = false;
+  instance = null;
+  fullReload = false;
 
-  packed: 'packed',
+  sizes = (() => [{columns: 2, gutter: 10}])();
 
-  position: true,
+  @computed()
+  get gridContainer() {
+    return this.element.querySelector('.bricks-container');
+  };
 
-  fullReload: false,
+  @computed()
+  get brickInstance() {
+    return this.instance || this.instantiate();
+  }
+  set brickInstance(value) {
+    this.instance = value;
+  }
 
-  resize: true,
-
-  isPacked: false,
-
-  sizes: computed(function() {
-    return [
-      { columns: 2, gutter: 10 }
-    ];
-  }),
-
-  gridContainer: computed(function() {
-    return this.$('.bricks-container')[0];
-  }),
-
-  brickInstance: computed(function() {
-    return this.instantiate();
-  }),
-
-  repackByOptions: observer('sizes.[]', function() {
+  @observes('sizes.[]')
+  repackByOptions() {
     this.disable();
     this.instantiate();
-  }),
+  }
 
   disable() {
     const brickInstance = this.get('brickInstance');
@@ -44,7 +44,7 @@ export default Component.extend({
       brickInstance.off('update');
       brickInstance.off('resize');
     }
-  },
+  }
 
   instantiate() {
     const {
@@ -65,13 +65,19 @@ export default Component.extend({
       packed,
       sizes: sizes.map((s) => assign({}, s, {
         columns: Number(s.columns),
-        gutter: Number(s.gutter),
-      })),
+        gutter: Number(s.gutter)
+      }))
     });
 
-    instance.on('pack', () => this.sendAction('pack'));
-    instance.on('update', () => this.sendAction('update'));
-    instance.on('resize', (size) => this.sendAction('resize', size));
+    instance.on('pack', () => {
+      if (typeof this.pack === 'function') this.pack();
+    });
+    instance.on('update', () => {
+      if (typeof this.update === 'function') this.update();
+    });
+    instance.on('resize', size => {
+      if (typeof this.resize === 'function') this.resize(size);
+    });
     instance.resize(resize);
 
     this.set('brickInstance', instance);
@@ -79,14 +85,14 @@ export default Component.extend({
     instance.pack();
 
     return instance;
-  },
+  }
 
   repack() {
     const {
       fullReload,
       brickInstance,
       isPacked,
-      isDestroyed,
+      isDestroyed
     } = this.getProperties(
       'brickInstance',
       'fullReload',
@@ -105,5 +111,5 @@ export default Component.extend({
     } else {
       brickInstance.update();
     }
-  },
-});
+  }
+}

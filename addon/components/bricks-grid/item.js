@@ -1,16 +1,17 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import { next, schedule } from '@ember/runloop';
 import layout from '../../templates/components/bricks-grid/item';
 
-const { Component, on, run } = Ember;
+export default class Item extends Component {
+  layout = layout;
 
-export default Component.extend({
-  layout,
+  didInsertElement() {
+    super.didInsertElement(...arguments);
+    this.repack();
+  }
 
-  sendRepack: on('didInsertElement', function() {
-    this.sendAction('repack');
-  }),
-
-  sendRepackOnDestroy: on('willDestroyElement', function() {
-    run.next(() => run.schedule('afterRender', () => this.sendAction('repack')));
-  }),
-});
+  willDestroyElement() {
+    super.willDestroyElement(...arguments);
+    next(() => schedule('afterRender', () => this.repack()));
+  }
+}
