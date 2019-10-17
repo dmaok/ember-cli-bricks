@@ -5,8 +5,6 @@ import template from '../../templates/components/bricks-grid/item';
 
 export default @layout(template)
 class Item extends Component {
-  layout = layout;
-
   didInsertElement() {
     super.didInsertElement(...arguments);
     this.repack();
