@@ -1,37 +1,35 @@
-import Ember from 'ember';
+import Component from '@ember/component';
+import {computed, observer} from '@ember/object';
+import {assign} from '@ember/polyfills';
 import Bricks from 'bricks';
+import { tryInvoke } from '@ember/utils';
 import layout from '../templates/components/bricks-grid';
-
-const { Component, computed, observer, assign} = Ember;
 
 export default Component.extend({
   layout,
 
   packed: 'packed',
-
   position: true,
-
   fullReload: false,
-
   resize: true,
-
   isPacked: false,
 
-  sizes: computed(function() {
-    return [
+  _sizes: computed('sizes', function() {
+    return this.get('sizes') || [
       { columns: 2, gutter: 10 }
     ];
   }),
 
   gridContainer: computed(function() {
-    return this.$('.bricks-container')[0];
+    return this.element.querySelector('.bricks-container');
   }),
 
+  _brickInstance: undefined,
   brickInstance: computed(function() {
-    return this.instantiate();
+    return this._brickInstance || this.instantiate();
   }),
 
-  repackByOptions: observer('sizes.[]', function() {
+  repackByOptions: observer('_sizes.[]', function() {
     this.disable();
     this.instantiate();
   }),
@@ -50,12 +48,12 @@ export default Component.extend({
     const {
       position,
       packed,
-      sizes,
+      _sizes,
       resize
     } = this.getProperties(
       'position',
       'packed',
-      'sizes',
+      '_sizes',
       'resize'
     );
 
@@ -63,18 +61,18 @@ export default Component.extend({
       container: this.get('gridContainer'),
       position,
       packed,
-      sizes: sizes.map((s) => assign({}, s, {
+      sizes: _sizes.map((s) => assign({}, s, {
         columns: Number(s.columns),
         gutter: Number(s.gutter),
       })),
     });
 
-    instance.on('pack', () => this.sendAction('pack'));
-    instance.on('update', () => this.sendAction('update'));
-    instance.on('resize', (size) => this.sendAction('resize', size));
+    instance.on('pack', () => tryInvoke(this, 'pack'));
+    instance.on('update', () => tryInvoke(this, 'update'));
+    instance.on('resize', size => tryInvoke(this, 'resize', [size]));
     instance.resize(resize);
 
-    this.set('brickInstance', instance);
+    this.set('_brickInstance', instance);
 
     instance.pack();
 
