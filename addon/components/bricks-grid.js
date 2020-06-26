@@ -8,14 +8,18 @@ import {observes} from '@ember-decorators/object';
 
 export default @layout(template)
 class BrickGrid extends Component {
-  packed = 'packed';
-  resize = true;
-  position = true;
-  isPacked = false;
-  instance = null;
-  fullReload = false;
 
-  sizes = (() => [{columns: 2, gutter: 10}])();
+  init() {
+    super.init(...arguments);
+
+    this.set('packed', this.attrs?.packed ?? this.args?.packed ?? 'packed');
+    this.set('resize', this.attrs?.resize ?? this.args?.resize ?? true);
+    this.set('position', this.attrs?.position ?? this.args?.position ?? true);
+    this.set('isPacked', this.attrs?.isPacked ?? this.args?.isPacked ?? false);
+    this.set('instance', this.attrs?.instance ?? this.args?.instance ?? null);
+    this.set('fullReload', this.attrs?.fullReload ?? this.args?.fullReload ?? false);
+    this.set('sizes', this.attrs?.sizes ?? this.args?.sizes ?? [{columns: 2, gutter: 10}]);
+  }
 
   @computed()
   get gridContainer() {
